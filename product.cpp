@@ -3,84 +3,72 @@
 
 #include <iostream>
 #include <string>
-#include "list.cpp"  // Include your List class definition here
-
 using namespace std;
 
-class ProductItem {
+class Product {
 private:
-    static int idCounter;  // Static counter to generate unique IDs
-    int productID;
-    string name;
-    string description;
-    double price;
-    int quantity;
-    List<string> tags;
-    List<string> reviews;
-    List<int> relatedProducts;  // Stores IDs of related products
+    string productID;    // Unique identifier for the product
+    string productName;  // Name of the product
+    double price;        // Price of the product
+    int quantity;        // Quantity available in stock
+    string description;  // Description of the product
 
 public:
-    // Constructor
-    ProductItem(const string &name, const string &description, double price, int quantity, int tagSize = 5, int reviewSize = 10, int relatedSize = 5)
-        : name(name), description(description), price(price), quantity(quantity),
-          tags(tagSize), reviews(reviewSize), relatedProducts(relatedSize) {
-        productID = ++idCounter;  // Assign a unique ID to each product
-    }
+    // Default constructor
+    Product() : productID(""), productName(""), price(0.0), quantity(0), description("") {}
 
-    // Add a tag
-    bool addTag(const string &tag) {
-        return tags.push_back(tag);
-    }
+    // Parameterized constructor
+    Product(string productID, string productName, double price, int quantity, string description)
+        : productID(productID), productName(productName), price(price), quantity(quantity), description(description) {}
 
-    // Add a review
-    bool addReview(const string &review) {
-        return reviews.push_back(review);
-    }
+    // Getter and Setter methods
+    string getProductID() const { return productID; }
+    void setProductID(const string& id) { productID = id; }
 
-    // Add a related product by ID
-    bool addRelatedProduct(int relatedProductID) {
-        return relatedProducts.push_back(relatedProductID);
-    }
+    string getProductName() const { return productName; }
+    void setProductName(const string& name) { productName = name; }
 
-    // Display product details
-    void display() const {
-        cout << "Product ID: " << productID << endl;
-        cout << "Name: " << name << endl;
-        cout << "Description: " << description << endl;
-        cout << "Price: $" << price << endl;
-        cout << "Quantity: " << quantity << endl;
-
-        // Display tags
-        cout << "Tags: ";
-        tags.print();
-
-        // Display reviews
-        cout << "Reviews: ";
-        reviews.print();
-
-        // Display related products
-        cout << "Related Products: ";
-        relatedProducts.print();
-        cout << endl;
-    }
-
-    // Getters
-    int getID() const { return productID; }
-    string getName() const { return name; }
     double getPrice() const { return price; }
-    int getQuantity() const { return quantity; }
+    void setPrice(double p) { price = p; }
 
-    // Setters
-    void setName(const string &newName) { name = newName; }
-    void setPrice(double newPrice) { price = newPrice; }
-    void setQuantity(int newQuantity) { quantity = newQuantity; }
+    int getQuantity() const { return quantity; }
+    void setQuantity(int qty) { quantity = qty; }
+
+    string getDescription() const { return description; }
+    void setDescription(const string& desc) { description = desc; }
+
+    // Method to display product details
+    void displayProductDetails() const {
+        cout << "Product ID: " << productID << endl;
+        cout << "Product Name: " << productName << endl;
+        cout << "Price: $" << price << endl;
+        cout << "Quantity Available: " << quantity << endl;
+        cout << "Description: " << description << endl;
+    }
+
+    // Method to check if product is in stock
+    bool isInStock() const {
+        return quantity > 0;
+    }
+
+    // Method to update stock (after purchase)
+    void updateStock(int purchasedQuantity) {
+        if (quantity >= purchasedQuantity) {
+            quantity -= purchasedQuantity;
+            cout << "Stock updated. Remaining stock: " << quantity << endl;
+        } else {
+            cout << "Not enough stock available!" << endl;
+        }
+    }
+
+    // Method to restock the product
+    void restock(int additionalQuantity) {
+        quantity += additionalQuantity;
+        cout << "Product restocked. New stock: " << quantity << endl;
+    }
 
     // Destructor
-    ~ProductItem() {}
+    ~Product() {}
 };
-
-// Initialize static variable
-int ProductItem::idCounter = 0;
-
 
 #endif

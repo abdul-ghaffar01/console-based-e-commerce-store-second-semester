@@ -1,30 +1,29 @@
 #ifndef ADMIN
 #define ADMIN
 
-#include<iostream>
+#include <iostream>
 #include <string>
-#include "./user.cpp"
-#include "./list.cpp"
-using namespace std;
-
+#include "../user.cpp"
+#include "../list.cpp"
+#include "../product.cpp"
+#include "../file handler.cpp"
 using namespace std;
 
 class Admin : public User {
 private:
-    List<string> managedUsers;   // List of managed user names
-    List<string> productCatalog; // List of product IDs or names
+    List<Product> productCatalog; // List of products managed by the admin
+    FileHandler fileHandler; // To manage file operations for products
 
 public:
     Admin(string username, string password, string email, string phoneNumber = "", string address = "", string dateOfRegistration = "");
+    Admin();
 
     // Admin functionalities
-    void addProduct(const string& productID);
+    void addProduct(const Product& product);
     void removeProduct(const string& productID);
     void displayCatalog() const;
-
-    void addUser(const string& username);
-    void removeUser(const string& username);
-    void displayManagedUsers() const;
+    void loadProductsFromFile(); // Load products from product.txt
+    void saveProductsToFile();   // Save products to product.txt
 
     // Initiate the admin panel
     void begin();
@@ -32,73 +31,95 @@ public:
     ~Admin();
 };
 
+// Default constructor
+Admin::Admin() : fileHandler("product.txt") {}
 
-
-
-// Constructor
+// Constructor with parameters
 Admin::Admin(string username, string password, string email, string phoneNumber, string address, string dateOfRegistration)
     : User(username, password, email, "admin", phoneNumber, address, dateOfRegistration),
-      managedUsers(50), productCatalog(100) {}
+      fileHandler("product.txt") {
+    loadProductsFromFile(); // Load products when the admin is created
+}
 
-// Add a product to the catalog
-void Admin::addProduct(const string& productID) {
-    if (!productCatalog.push_back(productID)) {
-        cout << "Failed to add product: Catalog is full." << endl;
-    } else {
-        cout << "Product " << productID << " added to catalog." << endl;
+// Load products from file
+void Admin::loadProductsFromFile() {
+    List<string> lines = fileHandler.readAllLines();
+    for (int i = 0; i < lines.length(); ++i) {
+        string line = lines.get(i);
+        // Assuming the product data is stored as "ID,Name,Price,Quantity,Description"
+        size_t pos = 0;
+        string productID, productName, description;
+        double price;
+        int quantity;
+
+        // Parse the line into product attributes
+        pos = line.find(",");
+        productID = line.substr(0, pos);
+        line.erase(0, pos + 1);
+
+        pos = line.find(",");
+        productName = line.substr(0, pos);
+        line.erase(0, pos + 1);
+
+        pos = line.find(",");
+        price = stod(line.substr(0, pos));
+        line.erase(0, pos + 1);
+
+        pos = line.find(",");
+        quantity = stoi(line.substr(0, pos));
+        line.erase(0, pos + 1);
+
+        description = line; // Remaining string is the description
+
+        // Create a Product object and add it to the catalog
+        Product product(productID, productName, price, quantity, description);
+        productCatalog.push_back(product); // Correctly add product to list
     }
+}
+
+// Save all products to the file
+void Admin::saveProductsToFile() {
+    List<string> lines;
+    for (int i = 0; i < productCatalog.length(); ++i) {
+        Product& product = productCatalog[i];
+        string line = product.getProductID() + "," + product.getProductName() + "," + 
+                      to_string(product.getPrice()) + "," + to_string(product.getQuantity()) + "," + 
+                      product.getDescription();
+        lines.push_back(line);
+    }
+    fileHandler.writeAllLines(lines);
+}
+
+// Add a new product to the catalog
+void Admin::addProduct(const Product& product) {
+    productCatalog.push_back(product); // Adding product to the list
+    saveProductsToFile(); // Save the updated catalog to the file
+    cout << "Product " << product.getProductName() << " added to catalog." << endl;
 }
 
 // Remove a product from the catalog
 void Admin::removeProduct(const string& productID) {
-    for (int i = 0; i < productCatalog.length(); i++) {
-        if (productCatalog[i] == productID) {
-            productCatalog.pop_start();
-            cout << "Product " << productID << " removed from catalog." << endl;
+    for (int i = 0; i < productCatalog.length(); ++i) {
+        if (productCatalog.get(i).getProductID() == productID) {
+            productCatalog.pop_start(); // Remove product from list
+            saveProductsToFile(); // Save the updated catalog to the file
+            cout << "Product with ID " << productID << " removed from catalog." << endl;
             return;
         }
     }
-    cout << "Product " << productID << " not found in catalog." << endl;
+    cout << "Product with ID " << productID << " not found in catalog." << endl;
 }
 
-// Display the product catalog
+// Display all products in the catalog
 void Admin::displayCatalog() const {
     cout << "Product Catalog:" << endl;
-    for (int i = 0; i < productCatalog.length(); i++) {
-        cout << "- " << productCatalog.get(i) << endl;
+    for (int i = 0; i < productCatalog.length(); ++i) {
+        productCatalog.get(i).displayProductDetails(); // Display product details
+        cout << endl;
     }
 }
 
-// Add a user to the managed list
-void Admin::addUser(const string& username) {
-    if (!managedUsers.push_back(username)) {
-        cout << "Failed to add user: Managed users list is full." << endl;
-    } else {
-        cout << "User " << username << " added to managed users." << endl;
-    }
-}
-
-// Remove a user from the managed list
-void Admin::removeUser(const string& username) {
-    for (int i = 0; i < managedUsers.length(); i++) {
-        if (managedUsers[i] == username) {
-            managedUsers.pop_start();
-            cout << "User " << username << " removed from managed users." << endl;
-            return;
-        }
-    }
-    cout << "User " << username << " not found in managed users." << endl;
-}
-
-// Display managed users
-void Admin::displayManagedUsers() const {
-    cout << "Managed Users:" << endl;
-    for (int i = 0; i < managedUsers.length(); i++) {
-        cout << "- " << managedUsers.get(i) << endl;
-    }
-}
-
-// Initiate the admin panel
+// Admin panel for managing products
 void Admin::begin() {
     int choice;
     do {
@@ -106,9 +127,6 @@ void Admin::begin() {
         cout << "1. Display Catalog\n";
         cout << "2. Add Product\n";
         cout << "3. Remove Product\n";
-        cout << "4. Display Managed Users\n";
-        cout << "5. Add User\n";
-        cout << "6. Remove User\n";
         cout << "0. Exit Admin Panel\n";
         cout << "Enter your choice: ";
         cin >> choice;
@@ -118,34 +136,32 @@ void Admin::begin() {
             displayCatalog();
             break;
         case 2: {
-            cout << "Enter product ID to add: ";
-            string productID;
+            string productID, productName, description;
+            double price;
+            int quantity;
+
+            cout << "Enter product ID: ";
             cin >> productID;
-            addProduct(productID);
+            cout << "Enter product name: ";
+            cin.ignore();  // To handle newline left in the input buffer
+            getline(cin, productName);
+            cout << "Enter price: ";
+            cin >> price;
+            cout << "Enter quantity: ";
+            cin >> quantity;
+            cout << "Enter description: ";
+            cin.ignore();
+            getline(cin, description);
+
+            Product newProduct(productID, productName, price, quantity, description);
+            addProduct(newProduct);
             break;
         }
         case 3: {
-            cout << "Enter product ID to remove: ";
             string productID;
+            cout << "Enter product ID to remove: ";
             cin >> productID;
             removeProduct(productID);
-            break;
-        }
-        case 4:
-            displayManagedUsers();
-            break;
-        case 5: {
-            cout << "Enter username to add to managed users: ";
-            string username;
-            cin >> username;
-            addUser(username);
-            break;
-        }
-        case 6: {
-            cout << "Enter username to remove from managed users: ";
-            string username;
-            cin >> username;
-            removeUser(username);
             break;
         }
         case 0:
