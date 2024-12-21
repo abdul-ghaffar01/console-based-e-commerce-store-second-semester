@@ -19,7 +19,7 @@ protected:
     string address;
     string dateOfRegistration;
     bool isActive;
-    List<string> orderHistory; // Stores order IDs or summaries
+    List<string> orderHistory; // Stores order IDs
 
 public:
     // Default constructor
@@ -78,6 +78,18 @@ public:
 
     // Display user information
     virtual void displayInfo() const;
+
+    static User *findUserByUsername(const string &username, const List<User> &users)
+    {
+        for (int i = 0; i<users.length(); i++)
+        {
+            if (users[i].getUsername() == username)
+            {
+                return new User(users[i]); // Return a copy of the user
+            }
+        }
+        return nullptr;
+    }
 
     // Destructor
     virtual ~User();

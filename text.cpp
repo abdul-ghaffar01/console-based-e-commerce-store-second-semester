@@ -35,6 +35,9 @@ public:
     static string yellow() { return "\033[33m"; }
     static string magenta() { return "\033[35m"; }
     static string cyan() { return "\033[36m"; }
+    static string white() { return "\033[37m"; }
+    static string bold() { return "\033[1m"; }
+    static string normal() { return "\033[0m"; }
 };
 
 // Derived class for single-color text
@@ -42,17 +45,25 @@ class SingleColorText : public Text
 {
 private:
     string color; // Single color for the text
+    bool bold;
 
 public:
     // Constructor for single-color text
-    SingleColorText(const string &text, const string &color, int delay = 100)
-        : Text(text, delay), color(color) {}
+    SingleColorText(const string &text, const string &color, bool bold = 0, int delay = 40)
+        : Text(text, delay), color(color), bold(bold) {}
 
     void setText(const string text)
     {
         this->text = text;
     }
-
+    void setBold(const bool bold)
+    {
+        this->bold = bold;
+    }
+    void setDelay(const int delay)
+    {
+        this->delay = delay;
+    }
     void setColor(const string &color)
     {
         this->color = color;
@@ -62,11 +73,14 @@ public:
     {
         for (size_t i = 0; i < text.length(); ++i)
         {
+            if (bold)
+                cout << Text::bold();
+            else
+                cout << Text ::normal();
             cout << color << text[i] << Text::reset(); // Call reset from Text
             cout.flush();
             this_thread::sleep_for(chrono::milliseconds(delay));
         }
-        cout << endl;
     }
 };
 
@@ -103,7 +117,6 @@ public:
             cout.flush();
             this_thread::sleep_for(chrono::milliseconds(delay));
         }
-        cout << endl;
     }
 };
 
@@ -167,12 +180,14 @@ public:
 
 class BlinkingText : public Text
 {
+    int times;
+
 public:
-    BlinkingText(const string &text, int delay = 100, int forSecs = 10) : Text(text, delay) {}
+    BlinkingText(const string &text, int delay = 100, int times = 10) : Text(text, delay), times(times) {}
 
     void print() override
     {
-        while (true)
+        for (int i = 0; i < times; i++)
         {
             // Print the text
             cout << text << flush;
@@ -180,6 +195,7 @@ public:
 
             // Clear the text
             cout << "\r" << string(text.length(), ' ') << "\r" << flush;
+
             this_thread::sleep_for(chrono::milliseconds(delay));
         }
     }
