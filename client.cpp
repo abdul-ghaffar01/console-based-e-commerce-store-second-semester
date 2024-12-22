@@ -33,7 +33,7 @@ public:
             cout << "\nWelcome, " << Text::green() << user->getUsername() << Text::white() << "! Choose an option:" << endl;
             cout << "1. View Products" << endl;
             cout << "2. Go to Cart" << endl;
-            cout << "3. View Order History" << endl;
+            cout << "3. Add Product to Cart" << endl;
             cout << "4. Update Profile" << endl;
             cout << "0. Exit" << endl;
             s.setText("Enter your choice: ");
@@ -49,8 +49,29 @@ public:
                 goToCart();
                 break;
             case 3:
-                user->displayOrderHistory();
-                break;
+            {
+                ProductManager pm("files/product.txt");
+
+                List<Product> products = pm.getAllProducts();
+                string productID;
+                int quantity;
+                cout << "Enter the Product ID to add to cart (or type 'exit' to return): ";
+                cin >> productID;
+                if (productID == "exit")
+                    return;
+
+                cout << "Enter the quantity: ";
+                cin >> quantity;
+
+                for (int i = 0; i < products.length(); i++)
+                {
+                    if (products[i].getProductID() == productID)
+                    {
+                        cart.addProduct(products[i]);
+                    }
+                }
+            }
+            break;
             case 4:
                 updateProfile();
                 break;
@@ -78,14 +99,10 @@ private:
 
         List<Product> products = pm.getAllProducts();
         string productID;
-        int quantity;
         cout << "Enter the Product ID to add to cart (or type 'exit' to return): ";
         cin >> productID;
         if (productID == "exit")
             return;
-
-        cout << "Enter the quantity: ";
-        cin >> quantity;
 
         for (int i = 0; i < products.length(); i++)
         {
@@ -156,12 +173,33 @@ private:
         SingleColorText s("Do you want to confirm the purchase? (yes/no): ", Text::blue());
         s.print();
         cin >> confirmation;
+        int amount;
 
         if (confirmation == "yes")
         {
             s.setText("Enter the amount: ");
             s.setColor(Text::blue());
             s.print();
+            cin >> amount;
+            if (amount == totalCost)
+            {
+                s.setText("Thanks for purchasing.");
+                s.setColor(Text::green());
+                s.print();
+            }
+            else if (amount > totalCost)
+            {
+                s.setText("Thanks for purchasing, " + to_string(amount - totalCost) + " added back to your account.");
+                s.setColor(Text::green());
+                s.print();
+            }
+            else
+            {
+                s.setText("Thanks for purchasing, " + to_string(totalCost - amount) + " will be taken as cash on delivery.");
+                s.setColor(Text::green());
+                s.print();
+            }
+            cart.items.clear();
         }
         else
         {
