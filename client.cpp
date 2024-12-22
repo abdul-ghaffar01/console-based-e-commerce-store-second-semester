@@ -209,10 +209,3 @@ private:
 };
 
 #endif
-
-// class Client{
-//     public:
-//     void begin(){
-//         cout << "Client begin" << endl;
-//     }
-// };

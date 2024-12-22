@@ -46,7 +46,7 @@ int main()
                       "        \\/                           \\/      ";
 
     MultiColorText logo = MultiColorText(logoText, colors, 20);
-    // logo.print();
+    logo.print();
     cout << endl
          << endl;
 

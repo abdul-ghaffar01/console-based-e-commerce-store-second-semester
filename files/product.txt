@@ -1,1 +1,4 @@
-101,Iphone 11 pro,1100.000000,21,jThe best iphone ever made
+pd-101,Fitbit Versa 4,199.0000,20,Health and fitness smartwatch with GPS
+pd-102,MacBook Air M2,1200.000000,15,Lightweight and powerful laptop with the latest M2 chip
+pd-103,Samsung Galaxy S23,1000.00,30,Flagship smartphone with cutting-edge features
+pd-104,Dell XPS 15,1500.000000,10,High-performance laptop for professionals
