@@ -153,7 +153,7 @@ int main()
                 auth.login(username, password, "client");
 
             // redirecting to the client panel instantly
-            Client client(User::findUserByUsername(auth.getCurrentUser()->getUsername(), auth.getAllUsers()));
+            Client client(auth.getCurrentUser());
             client.begin();
             break;
         }

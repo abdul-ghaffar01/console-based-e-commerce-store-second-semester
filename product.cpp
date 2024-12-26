@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include "text.cpp"
 using namespace std;
 
 class Product

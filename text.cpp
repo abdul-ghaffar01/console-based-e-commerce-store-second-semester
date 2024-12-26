@@ -11,7 +11,7 @@
 
 using namespace std;
 
-// Base class for all text types
+// Base class for all text types abstract class
 class Text
 {
 protected:
@@ -22,8 +22,8 @@ public:
     // Constructor to initialize text and delay
     Text(const string &text, int delay = 100) : text(text), delay(delay) {}
 
-    // Virtual print method (to be overridden by derived classes)
-    virtual void print() = 0;
+    // Virtual print method (to be overridden by derived classes) | poly
+    virtual void print() = 0;  // pure virtual method
 
     // Static method for reset
     static string reset() { return "\033[0m"; }

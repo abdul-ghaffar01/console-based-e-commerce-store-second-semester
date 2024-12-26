@@ -6,6 +6,7 @@
 #include "cart.cpp"
 #include "product.cpp"
 #include "user.cpp"
+
 using namespace std;
 
 class Client
@@ -58,7 +59,7 @@ public:
                 cout << "Enter the Product ID to add to cart (or type 'exit' to return): ";
                 cin >> productID;
                 if (productID == "exit")
-                    return;
+                    break;
 
                 cout << "Enter the quantity: ";
                 cin >> quantity;
@@ -67,6 +68,7 @@ public:
                 {
                     if (products[i].getProductID() == productID)
                     {
+                        products[i].setQuantity(quantity);
                         cart.addProduct(products[i]);
                     }
                 }
@@ -101,6 +103,9 @@ private:
         string productID;
         cout << "Enter the Product ID to add to cart (or type 'exit' to return): ";
         cin >> productID;
+        int quantity;
+        cout << "Enter quantity: ";
+        cin >> quantity;
         if (productID == "exit")
             return;
 
@@ -108,6 +113,7 @@ private:
         {
             if (products[i].getProductID() == productID)
             {
+                products[i].setQuantity(quantity);
                 cart.addProduct(products[i]);
                 return;
             }
@@ -199,7 +205,7 @@ private:
                 s.setColor(Text::green());
                 s.print();
             }
-            cart.items.clear();
+            cart.clearCart();
         }
         else
         {
@@ -216,7 +222,7 @@ private:
         cout << "1. Update Phone Number" << endl;
         cout << "2. Update Address" << endl;
         cout << "3. Return to Main Menu" << endl;
-        string username, address;
+        string phone, address;
 
         int choice;
         cin >> choice;
@@ -225,8 +231,8 @@ private:
         {
         case 1:
             cout << "Enter new phone number: ";
-            cin >> username;
-            user->setUsername(username);
+            cin >> phone;
+            user->setPhoneNumber(phone);
             cout << "Phone number updated!" << endl;
             break;
         case 2:

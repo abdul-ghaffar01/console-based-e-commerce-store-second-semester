@@ -149,7 +149,7 @@ double Cart::getTotalPrice() const
     double total = 0;
     for (int i = 0; i < items.length(); ++i)
     {
-        total += items.get(i).getPrice();
+        total += items.get(i).getPrice()*items.get(i).getQuantity();
     }
     return total;
 }
@@ -158,7 +158,7 @@ double Cart::getTotalPrice() const
 void Cart::clearCart()
 {
     items.clear();
-    cout << "Your cart has been cleared." << endl;
+    // cout << "Your cart has been cleared." << endl;
     saveCart(); // Save the empty state
 }
 
