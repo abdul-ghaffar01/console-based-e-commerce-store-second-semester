@@ -104,11 +104,11 @@ private:
         cout << "Enter the Product ID to add to cart (or type 'exit' to return): ";
         cin >> productID;
         int quantity;
-        cout << "Enter quantity: ";
-        cin >> quantity;
         if (productID == "exit")
             return;
 
+        cout << "Enter quantity: ";
+        cin >> quantity;
         for (int i = 0; i < products.length(); i++)
         {
             if (products[i].getProductID() == productID)
