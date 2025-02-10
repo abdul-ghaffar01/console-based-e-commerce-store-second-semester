@@ -23,21 +23,21 @@ public:
     Text(const string &text, int delay = 100) : text(text), delay(delay) {}
 
     // Virtual print method (to be overridden by derived classes) | poly
-    virtual void print() = 0; // pure virtual method
+    virtual void print() = 0;  // pure virtual method
 
     // Static method for reset
-    static string reset() { return ""; }
+    static string reset() { return "\033[0m"; }
 
     // Static methods for ANSI color codes
-    static string red() { return ""; }
-    static string green() { return ""; }
-    static string blue() { return ""; }
-    static string yellow() { return ""; }
-    static string magenta() { return ""; }
-    static string cyan() { return ""; }
-    static string white() { return ""; }
-    static string bold() { return ""; }
-    static string normal() { return ""; }
+    static string red() { return "\033[31m"; }
+    static string green() { return "\033[32m"; }
+    static string blue() { return "\033[34m"; }
+    static string yellow() { return "\033[33m"; }
+    static string magenta() { return "\033[35m"; }
+    static string cyan() { return "\033[36m"; }
+    static string white() { return "\033[37m"; }
+    static string bold() { return "\033[1m"; }
+    static string normal() { return "\033[0m"; }
 };
 
 // Derived class for single-color text
@@ -71,19 +71,16 @@ public:
     // Method to display the animated text in single color
     void print() override
     {
-        // old code
-        // for (size_t i = 0; i < text.length(); ++i)
-        // {
-        //     if (bold)
-        //         cout << Text::bold();
-        //     else
-        //         cout << Text ::normal();
-        //     cout << color << text[i] << Text::reset(); // Call reset from Text
-        //     cout.flush();
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
-        // }
-
-        cout << text;
+        for (size_t i = 0; i < text.length(); ++i)
+        {
+            if (bold)
+                cout << Text::bold();
+            else
+                cout << Text ::normal();
+            cout << color << text[i] << Text::reset(); // Call reset from Text
+            cout.flush();
+            this_thread::sleep_for(chrono::milliseconds(delay));
+        }
     }
 };
 
@@ -112,17 +109,14 @@ public:
     // Method to display the animated text with multiple colors
     void print() override
     {
-        // old code
-        // int colorCount = colors.length();
-        // for (int i = 0; i < text.length(); ++i)
-        // {
-        //     string color = colors[i % colorCount];
-        //     cout << color << text[i] << Text::reset(); // Call reset from Text
-        //     cout.flush();
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
-        // }
-
-        cout << text;
+        int colorCount = colors.length();
+        for (int i = 0; i < text.length(); ++i)
+        {
+            string color = colors[i % colorCount];
+            cout << color << text[i] << Text::reset(); // Call reset from Text
+            cout.flush();
+            this_thread::sleep_for(chrono::milliseconds(delay));
+        }
     }
 };
 
@@ -133,15 +127,14 @@ public:
 
     void print() override
     {
-        // int n = text.length();
-        // for (int i = 0; i < n; ++i)
-        // {
-        //     // Move the cursor to a new position to create the spiral effect
-        //     cout << string(i, ' ') << text[i] << flush;
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
-        //     cout << endl;
-        // }
-        cout << text;
+        int n = text.length();
+        for (int i = 0; i < n; ++i)
+        {
+            // Move the cursor to a new position to create the spiral effect
+            cout << string(i, ' ') << text[i] << flush;
+            this_thread::sleep_for(chrono::milliseconds(delay));
+            cout << endl;
+        }
     }
 };
 
@@ -175,14 +168,13 @@ public:
 
     void print() override
     {
-        // for (size_t i = 0; i < text.length(); ++i)
-        // {
-        //     cout << randomColor() << text[i] << Text::reset();
-        //     cout.flush();
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
-        // }
-        // cout << endl;
-        cout << text;
+        for (size_t i = 0; i < text.length(); ++i)
+        {
+            cout << randomColor() << text[i] << Text::reset();
+            cout.flush();
+            this_thread::sleep_for(chrono::milliseconds(delay));
+        }
+        cout << endl;
     }
 };
 
@@ -195,19 +187,17 @@ public:
 
     void print() override
     {
-        // for (int i = 0; i < times; i++)
-        // {
-        //     // Print the text
-        //     cout << text << flush;
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
+        for (int i = 0; i < times; i++)
+        {
+            // Print the text
+            cout << text << flush;
+            this_thread::sleep_for(chrono::milliseconds(delay));
 
-        //     // Clear the text
-        //     cout << "\r" << string(text.length(), ' ') << "\r" << flush;
+            // Clear the text
+            cout << "\r" << string(text.length(), ' ') << "\r" << flush;
 
-        //     this_thread::sleep_for(chrono::milliseconds(delay));
-        // }
-
-        cout << text;
+            this_thread::sleep_for(chrono::milliseconds(delay));
+        }
     }
 };
 
